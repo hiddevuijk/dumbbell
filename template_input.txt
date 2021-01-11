@@ -1,0 +1,16 @@
+#system parameters
+N = 10
+L = 10.
+v0 = 10.
+Dr = 20.
+seed = 213436111
+
+
+#integration parameter
+Nt_init = 10
+Nt = 10
+sample_freq = 1
+print_freq = 10
+t_unit = 1000000
+dt = 0.0000005
+bs = .5
