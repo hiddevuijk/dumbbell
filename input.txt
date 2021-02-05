@@ -1,10 +1,11 @@
 #system parameters
-N = 10
-L = 10.
-m = 0.002
-Dr = 20.
+N = 100
+L = 5.
+T = 1.
+gamma = 1.
+gamma_theta = 1.
+
 seed = 213436111
-B = 1.
 
 #swim force parameters
 v0 = 10.
@@ -14,10 +15,10 @@ w = 1.5
 
 
 #integration parameter
-Nt_init = 10000
-Nt = 100000
+Nt_init = 0
+Nt = 10000
 sample_freq = 1
-print_freq = 1000
-t_unit = 10000
-dt = 0.00005
+print_freq = 1
+t_unit = 100
+dt = 0.005
 bs = .5

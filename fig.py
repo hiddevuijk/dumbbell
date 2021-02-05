@@ -8,13 +8,6 @@ from sys import exit
 rho = np.mean(np.loadtxt("rho.dat"),0)
 bins = np.loadtxt("rho_bins.dat")
 
-fx = np.mean(np.loadtxt("fx.dat"),0)
-fy = np.mean(np.loadtxt("fy.dat"),0)
-fz = np.mean(np.loadtxt("fz.dat"),0)
-
-px = np.mean(np.loadtxt("px.dat"),0)
-py = np.mean(np.loadtxt("py.dat"),0)
-pz = np.mean(np.loadtxt("pz.dat"),0)
 
 Dr = 20.
 f = 10.

@@ -22,6 +22,7 @@ using namespace std;
 int main()
 {
 
+
 	// read input into config
 	ConfigFile config("input.txt");
 
@@ -30,7 +31,6 @@ int main()
 
 	// read system parameters
 	System system(config);
-
 	// start with random config. 
 	system.init_random();
 
@@ -39,7 +39,7 @@ int main()
 
 	// objects to sample density, orientation
 	Density_xy density(int_params.bs,system.L,system.N);
-	Orientation_xy orientation(int_params.bs,system.L);
+	Orientation orientation(int_params.bs,system.L);
 
 	// integrate Nt_init time steps
 	unsigned int ti;
@@ -70,7 +70,7 @@ int main()
 			system.step();
 	
 		if( (ti%int_params.sample_freq) == 0 ) {
-        density.sample(system);
+			density.sample(system);
             orientation.sample(system);
 		}
 
@@ -85,10 +85,8 @@ int main()
 
 	// normalize and save orientation
 	orientation.normalize();
-	orientation.write("p.dat");
-	orientation.writeX("px.dat");
-	orientation.writeY("py.dat");
-	orientation.write_bins("p_bins.dat");
+	orientation.write("theta.dat");
+	orientation.write_bins("theta_bins.dat");
 
 
 	// write final configuration

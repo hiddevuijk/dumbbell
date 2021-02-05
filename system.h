@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include <boost/random.hpp>
 
 namespace system_func {
@@ -41,16 +42,25 @@ public:
 	unsigned int N;
 	double L;
 	double v0;
-	double Dr;
+
+	double T;
+	double gamma;
+	double gamma_theta;
 	double dt;
 
+
+	double Dt;
+	double Dtheta;
 	double sqrt_2dt;
-	double sqrt_2dt_Dr;
+	double sqrt_2dt_Dt;
+	double sqrt_2dt_Dtheta;
+
+	double pi2;
 
 	// state of the system
 	double t;
 	std::vector<XY> r;
-	std::vector<XY> p;
+	std::vector<double> theta;
 	
 	Vfield vfield;
 
@@ -70,33 +80,34 @@ public:
 	
 	// temporary containers
 	double Vri;
-	XY xi,eta,dp,dv;	
+	XY xi;	
+	double eta;
 
 
 };
 
 void System::step()
 {
-
+	double Fx, Fy, Ftheta;
 	for(unsigned int i=0;i<N;++i) {
-
-	    r[i].pbc(L);	
-		
+		Fx = 0;
+		Fy = 0;
+		Ftheta = 0;
 
 		system_func::xy_random_normal(xi,rndist);
-		xi *= sqrt_2dt;
+		xi *= sqrt_2dt_Dt;
+
+		r[i].x += Fx;
+		r[i].y += Fy;
+		r[i]   += xi;
+
+	    r[i].pbc(L);	
 
 
-	
-		if( v0 > 0) {
-			
-			system_func::xy_random_normal(eta,rndist);
-			eta *= sqrt_2dt_Dr;
+		theta[i] += Ftheta + sqrt_2dt_Dtheta*rndist();
+		theta[i] = std::fmod( theta[i] , pi2 );
+		
 
-
-			p[i] += dp;
-			p[i].normalize();
-		}
 	}
 
 	t += dt;
@@ -119,15 +130,24 @@ System::System(ConfigFile config)
 	N = config.read<unsigned int>("N");
 	L = config.read<double>("L");
 	v0 = config.read<double>("v0");
-	Dr = config.read<double>("Dr");
-	dt = config.read<double>("dt");
-	sqrt_2dt = std::sqrt(2*dt);
-	sqrt_2dt_Dr = std::sqrt(2*dt*Dr);
 
+	T = config.read<double>("T");
+	gamma = config.read<double>("gamma");
+	gamma_theta = config.read<double>("gamma_theta");
+	dt = config.read<double>("dt");
+
+	Dt = T/gamma;
+	Dtheta = T/gamma_theta;
+	sqrt_2dt = std::sqrt(2*dt);
+	sqrt_2dt_Dt = std::sqrt(2*dt*Dt);
+	sqrt_2dt_Dtheta = std::sqrt(2*dt*Dtheta);
+
+	pi2 = 2*std::acos(-1);
+	
 	// init state
 	t = 0.0;
 	r = std::vector<XY>(N);
-	p = std::vector<XY>(N);
+	theta = std::vector<double>(N);
 
 
 }
@@ -138,17 +158,8 @@ void System::init_random()
 	for(unsigned int i=0;i<N; ++i) {
         r[i].x = rudist()*L;
         r[i].y = rudist()*L;
+		theta[i] = rudist()*pi2;
 
-
-        double d;
-        XY zeta;
-		do {
-			zeta.x = 2*rudist() - 1.;
-			zeta.y = 2*rudist() - 1.;
-			d = zeta.length_sq();	
-		} while (d > 1.);
-		zeta.normalize();
-		p[i] = zeta;
 	}
 
 }

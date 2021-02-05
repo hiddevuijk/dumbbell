@@ -7,35 +7,19 @@ from sys import exit
 rho = np.loadtxt("rho.dat")
 bins = np.loadtxt("rho_bins.dat")
 
-fx = np.loadtxt("fx.dat")
-fy = np.loadtxt("fy.dat")
-fz = np.loadtxt("fz.dat")
+theta = np.loadtxt("theta.dat")
 
-px = np.loadtxt("px.dat")
-py = np.loadtxt("py.dat")
-pz = np.loadtxt("pz.dat")
-
-plt.subplot(2,3,1)
+plt.subplot(1,2,1)
 plt.imshow(rho,interpolation='none')
-plt.title("density")
 plt.colorbar()
+plt.title("density")
 
-plt.subplot(2,3,2)
-plt.imshow(fx,interpolation='none')
-plt.title("flux x")
+plt.subplot(1,2,2)
+plt.imshow(theta, interpolation='none')
+plt.colorbar()
+plt.title("theta")
 
-plt.subplot(2,3,3)
-plt.imshow(fy,interpolation='none')
-plt.title("flux Y")
-
-plt.subplot(2,3,5)
-plt.imshow(px,interpolation='none')
-plt.title("p x")
-
-plt.subplot(2,3,6)
-plt.imshow(py,interpolation='none')
-plt.title("p y")
-
+plt.tight_layout()
 plt.show()
 
 
