@@ -2,63 +2,42 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import simps
 from sys import exit
+from theory import rho as rhoTH
+from theory import rho2 as rho2TH
+from theory import rhoN as rhoNTH
+from theory import rho2N as rho2NTH
 
 
-
-rho = np.mean(np.loadtxt("rho.dat"),0)
-bins = np.loadtxt("rho_bins.dat")
-
-
-Dr = 20.
-f = 10.
-dT = f*f/(6*Dr)
+x0 = 0
 L = 10.
-w = 2*np.pi/L
-k = 1.
-print(dT)
-def r(x):
-    return 1./np.sqrt(1+dT*np.sin(w*x)**2)
+T = 1.
+l = 1.
+v0 = 5.
 
-def px_th(x):
-    I1 = 1/(1+dT)
-    I2 = 1/(1+k**2)
-    I3 = 1./(6*Dr)
-    return -I1*I2*I3*f*w*np.cos(w*x)
-
-def py_th(x):
-    return k*px_th(x)
-
-rr = r(bins)
-norm = simps(rr,bins)
-rr /= norm
-
-norm = simps(rho,bins)
-rho /= norm
-
-plt.subplot(1,3,1)
-plt.plot(bins,rho)
-plt.plot(bins,rr)
-plt.title("density")
-
-plt.subplot(1,3,2)
-plt.plot(bins,px)
-plt.plot(bins,px_th(bins))
-plt.title("px")
+phi1 = 0.
+phi2 = 135
 
 
-plt.subplot(1,3,3)
-plt.plot(bins,py)
-plt.plot(bins,py_th(bins))
-plt.title("py")
+phi1 = phi1*2*np.pi/360
+phi2 = phi2*2*np.pi/360
+print(phi1,phi2)
 
+rho = np.mean(np.loadtxt("rho.dat"),0)*L
+bins = np.loadtxt("rho_bins.dat")
+#theta = np.mean(np.loadtxt("theta.dat"),0)
+#theta_bins = np.loadtxt("theta_bins.dat")
+
+x = np.linspace(x0,x0+L, 1000)
+r = rhoTH(x,L,T,l,phi1,phi2,v0)
+N = rhoNTH(x0,L,T,l,phi1,phi2,v0)
+r /= N
+
+r2 = rho2TH(x,L,T,l,phi1,phi2,v0)
+N = rho2NTH(x0,L,T,l,phi1,phi2,v0)
+r2 /= N
+
+plt.scatter(bins,rho)
+plt.plot(x,r)
+#plt.plot(x,r2)
 
 plt.show()
-
-exit()
-plt.subplot(1,3,2)
-plt.plot(bins,fx, label="fx")
-plt.plot(bins,fy, label="fy")
-plt.legend()
-plt.title("flux")
-
-

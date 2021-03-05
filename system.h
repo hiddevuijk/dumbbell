@@ -46,6 +46,9 @@ public:
 	double T;
 	double gamma;
 	double gamma_theta;
+    double A1xx, A1xy, A1yx, A1yy;
+    double A2xx, A2xy, A2yx, A2yy;
+    double l;
 	double dt;
 
 
@@ -89,23 +92,42 @@ public:
 void System::step()
 {
 	double Fx, Fy, Ftheta;
+    double px,py, p1x, p1y, p2x, p2y;
+    double f1, f2;
 	for(unsigned int i=0;i<N;++i) {
-		Fx = 0;
-		Fy = 0;
-		Ftheta = 0;
+        // FRitction!!!
+
+        px = cos(theta[i]);
+        py = sin(theta[i]);
+
+        XY p(px,py);
+        f1 = v0*vfield.get_field( r[i] + l*p/2);
+        f2 = v0*vfield.get_field( r[i] - l*p/2);
+
+        p1x = A1xx*px + A1xy*py;
+        p1y = A1yx*px + A1yy*py;
+        p2x = A2xx*px + A2xy*py;
+        p2y = A2yx*px + A2yy*py;
+
+        Fx  = f1*p1x + f2*p2x;
+        Fy  = f1*p1y + f2*p2y;
+
+		Ftheta = ( f1*A1yx - f2*A2yx );
+
 
 		system_func::xy_random_normal(xi,rndist);
-		xi *= sqrt_2dt_Dt;
+		xi *= std::sqrt(T*dt/gamma);
 
-		r[i].x += Fx;
-		r[i].y += Fy;
+		r[i].x += dt*Fx/(2*gamma);
+		r[i].y += dt*Fy/(2*gamma);
 		r[i]   += xi;
 
 	    r[i].pbc(L);	
 
 
-		theta[i] += Ftheta + sqrt_2dt_Dtheta*rndist();
+		theta[i] += dt*Ftheta/(gamma*l)+ std::sqrt(4*T*dt/(gamma*l*l))*rndist();
 		theta[i] = std::fmod( theta[i] , pi2 );
+
 		
 
 	}
@@ -130,10 +152,25 @@ System::System(ConfigFile config)
 	N = config.read<unsigned int>("N");
 	L = config.read<double>("L");
 	v0 = config.read<double>("v0");
-
+    l = config.read<double>("l");
 	T = config.read<double>("T");
 	gamma = config.read<double>("gamma");
 	gamma_theta = config.read<double>("gamma_theta");
+    double phi = config.read<double>("phi1");
+    A1xx = std::cos(phi);
+    A1yy = std::cos(phi);
+    A1xy = -std::sin(phi);
+    A1yx = std::sin(phi);
+    phi = config.read<double>("phi2");
+    A2xx = std::cos(phi);
+    A2yy = std::cos(phi);
+    A2xy = -std::sin(phi);
+    A2yx = std::sin(phi);
+
+
+
+
+
 	dt = config.read<double>("dt");
 
 	Dt = T/gamma;

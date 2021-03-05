@@ -19,8 +19,7 @@ protected:
 class VNone: public VfieldAll {
 public:
 	VNone() {w = 0; L = 0;}
-	double f(const XY& r)
-			{return 1;}
+	double f(const XY& r) {return 1;}
 };
 
 
@@ -31,7 +30,6 @@ public:
 
 	double f(const XY& r) {
 			return std::sin(w*r.x); }
-
 };
 
 class VSine2: public VfieldAll {
@@ -108,6 +106,8 @@ Vfield::Vfield(double w, double L,
 		vfield_ptr = &vnone;	
 	} else if( VType == "sine" ) {
 		vfield_ptr = &vsine;
+	} else if( VType == "sine2" ) {
+		vfield_ptr = &vsine2;
 	} else if( VType == "sine_shift" ) {
 		vfield_ptr = &vsine2;
 	} else if( VType == "gauss" ) {

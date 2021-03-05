@@ -1,24 +1,29 @@
 #system parameters
-N = 100
-L = 5.
+N = 1000
+L = 10.
+
+# particles
 T = 1.
 gamma = 1.
 gamma_theta = 1.
+phi1 = 0.
+phi2 = 2.3561945
+l = 1.
 
 seed = 213436111
 
 #swim force parameters
-v0 = 10.
-VType = step
-w = 1.5
+v0 = 5.
+VType = sine2
+w = 0.6283185307179586
 #w = 0.6283185307179586
 
 
 #integration parameter
-Nt_init = 0
-Nt = 10000
-sample_freq = 1
-print_freq = 1
-t_unit = 100
+Nt_init = 1000
+Nt = 2000
+sample_freq = 5
+print_freq = 100
+t_unit = 10
 dt = 0.005
-bs = .5
+bs = .2

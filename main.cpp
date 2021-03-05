@@ -50,6 +50,7 @@ int main()
 			cout << (int_params.Nt_init + int_params.Nt) << '\t';
 			cout << ti << endl;
 		}
+
 		// make t_unit time steps
 		for(unsigned int tti=0; tti < int_params.t_unit; ++tti)	{
 			system.step();
