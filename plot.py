@@ -9,15 +9,18 @@ bins = np.loadtxt("rho_bins.dat")
 
 theta = np.loadtxt("theta.dat")
 
+Jx = np.loadtxt("fluxX.dat")
+Jy = np.loadtxt("fluxY.dat")
+
 plt.subplot(1,2,1)
-plt.imshow(rho,interpolation='none')
+plt.imshow(Jx,interpolation='none')
 plt.colorbar()
-plt.title("density")
+plt.title("Jx")
 
 plt.subplot(1,2,2)
-plt.imshow(theta, interpolation='none')
+plt.imshow(Jy, interpolation='none')
 plt.colorbar()
-plt.title("theta")
+plt.title("Jy")
 
 plt.tight_layout()
 plt.show()

@@ -17,14 +17,16 @@ public:
 
 	void sample(const System &system);
 
-	void normalize();
+    void reset();
 
 	// write to out stream
 	void write(std::ostream &out);
+	void writeX(std::ostream &out);
 	void write_bins(std::ostream &out);
 		
 	// write to file named outname
 	void write(const char* outname);
+	void writeX(const char* outname);
 	void write_bins(const char* outname);
 	//void write(const char* outname);
 
@@ -87,21 +89,24 @@ void Density_xy::sample(const System &system)
 
 
 
-void Density_xy::normalize() 
+void Density_xy::reset()
 {
-	double norm = 1./(bs*bs*N*Nsample);
-	for(unsigned int jx = 0;jx < Nbin; ++jx ) {
-		for(unsigned int jy = 0;jy < Nbin; ++jy ) {
-			rho[jx][jy] *= norm;
-		}
-	}
+
+    Nsample = 0;
+    for(unsigned int ix=0; ix< Nbin; ++ix) {
+    for(unsigned int iy=0; iy< Nbin; ++iy) {
+        rho[ix][iy] = 0;
+    }}
+
 }
 
 void Density_xy::write(std::ostream &out)
 {
+
+	double norm = 1./(bs*bs*N*Nsample);
 	for(unsigned int jy=0;jy<Nbin;++jy) {
 		for(unsigned int jx=0;jx<Nbin;++jx) {
-			out << rho[jx][jy];
+			out << rho[jx][jy]*norm;
 			if(jx<(Nbin-1)) out << ' '; 
 		}
 		if(jy<(Nbin-1)) out << '\n';
@@ -113,17 +118,40 @@ void Density_xy::write(const char* outname)
 	std::ofstream out;
 	out.open(outname);
 
-	for(unsigned int jy=0;jy<Nbin;++jy) {
-		for(unsigned int jx=0;jx<Nbin;++jx) {
-			out << rho[jx][jy];
-			if(jx<(Nbin-1)) out << ' '; 
-		}
-		if(jy<(Nbin-1)) out << '\n';
-	}
+    write(out);	
 
 	out.close();
 
 }
+
+void Density_xy::writeX(std::ostream &out)
+{
+
+	double norm = 1./(bs*N*Nsample);
+    double rhox;
+    for(unsigned int jx=0;jx<Nbin;++jx) {
+        rhox = 0;
+        for(unsigned int jy=0;jy<Nbin;++jy) {
+			rhox += rho[jx][jy]*norm;
+		}
+        out << rhox;
+		if(jx<(Nbin-1)) out << '\t';
+	}
+    out << '\n';
+}
+
+void Density_xy::writeX(const char* outname)
+{
+	std::ofstream out;
+	out.open(outname);
+
+    writeX(out);	
+
+	out.close();
+
+}
+
+
 
 void Density_xy::write_bins(std::ostream &out)
 {

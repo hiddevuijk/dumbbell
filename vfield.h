@@ -38,7 +38,7 @@ public:
 	VSine2(double ww) { w=ww; }
 
 	double f(const XY& r) {
-			return 1+std::sin(w*r.x); }
+			return 1+std::sin(w*r.x + 3*std::acos(-1)/2); }
 
 };
 

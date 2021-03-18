@@ -63,6 +63,8 @@ public:
 	// state of the system
 	double t;
 	std::vector<XY> r;
+    std::vector<XY> dr;
+    std::vector<XY> v;
 	std::vector<double> theta;
 	
 	Vfield vfield;
@@ -93,6 +95,7 @@ void System::step()
 {
 	double Fx, Fy, Ftheta;
     double px,py, p1x, p1y, p2x, p2y;
+    double drx, dry;
     double f1, f2;
 	for(unsigned int i=0;i<N;++i) {
         // FRitction!!!
@@ -101,6 +104,7 @@ void System::step()
         py = sin(theta[i]);
 
         XY p(px,py);
+
         f1 = v0*vfield.get_field( r[i] + l*p/2);
         f2 = v0*vfield.get_field( r[i] - l*p/2);
 
@@ -112,18 +116,25 @@ void System::step()
         Fx  = f1*p1x + f2*p2x;
         Fy  = f1*p1y + f2*p2y;
 
-		Ftheta = ( f1*A1yx - f2*A2yx );
-
 
 		system_func::xy_random_normal(xi,rndist);
 		xi *= std::sqrt(T*dt/gamma);
 
-		r[i].x += dt*Fx/(2*gamma);
-		r[i].y += dt*Fy/(2*gamma);
-		r[i]   += xi;
+        drx = dt*Fx/(2*gamma) + xi.x;
+        dry = dt*Fy/(2*gamma) + xi.y;
 
-	    r[i].pbc(L);	
+        v[i].x = ( dr[i].x + drx ) / (2*dt);
+        v[i].y = ( dr[i].y + dry ) / (2*dt);
+    
+        dr[i].x = drx;
+        dr[i].y = dry;
 
+        r[i].x += drx;
+        r[i].y += dry;
+	    //r[i].pbc(L);	
+
+
+		Ftheta = ( f1*A1yx - f2*A2yx );
 
 		theta[i] += dt*Ftheta/(gamma*l)+ std::sqrt(4*T*dt/(gamma*l*l))*rndist();
 		theta[i] = std::fmod( theta[i] , pi2 );
@@ -147,6 +158,7 @@ System::System(ConfigFile config)
 			config.read<std::string>("VType") )
 {
 	XY rr;
+    
 
 	// init parameters
 	N = config.read<unsigned int>("N");
@@ -156,6 +168,7 @@ System::System(ConfigFile config)
 	T = config.read<double>("T");
 	gamma = config.read<double>("gamma");
 	gamma_theta = config.read<double>("gamma_theta");
+
     double phi = config.read<double>("phi1");
     A1xx = std::cos(phi);
     A1yy = std::cos(phi);
@@ -166,8 +179,6 @@ System::System(ConfigFile config)
     A2yy = std::cos(phi);
     A2xy = -std::sin(phi);
     A2yx = std::sin(phi);
-
-
 
 
 
@@ -184,7 +195,15 @@ System::System(ConfigFile config)
 	// init state
 	t = 0.0;
 	r = std::vector<XY>(N);
+	dr = std::vector<XY>(N, XY(0,0) );
+	v = std::vector<XY>(N, XY(0,0) );
 	theta = std::vector<double>(N);
+    for(unsigned int i=0;i<N;++i) {
+       r[i].x = rudist()*L; 
+       r[i].y = rudist()*L; 
+
+       theta[i] = rudist()*2*std::acos(-1);
+    }
 
 
 }

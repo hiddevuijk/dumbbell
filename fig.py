@@ -2,25 +2,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import simps
 from sys import exit
+from numerical import rho as rhoNUM
+from numerical import rhoN as rhoNNUM
+
 from theory import rho as rhoTH
-from theory import rho2 as rho2TH
 from theory import rhoN as rhoNTH
-from theory import rho2N as rho2NTH
+
 
 
 x0 = 0
-L = 10.
+L = 100.
 T = 1.
 l = 1.
-v0 = 5.
+v0 = 20.
 
 phi1 = 0.
-phi2 = 135
+phi2 = 1.57
 
+sm = np.sin(phi1) - np.sin(phi2) 
+sp = np.sin(phi1) + np.sin(phi2) 
 
-phi1 = phi1*2*np.pi/360
-phi2 = phi2*2*np.pi/360
-print(phi1,phi2)
+cm = np.cos(phi1) - np.cos(phi2) 
+cp = np.cos(phi1) + np.cos(phi2) 
+
+#print(cm, cp, sm,sp)
+
 
 rho = np.mean(np.loadtxt("rho.dat"),0)*L
 bins = np.loadtxt("rho_bins.dat")
@@ -30,14 +36,26 @@ bins = np.loadtxt("rho_bins.dat")
 x = np.linspace(x0,x0+L, 1000)
 r = rhoTH(x,L,T,l,phi1,phi2,v0)
 N = rhoNTH(x0,L,T,l,phi1,phi2,v0)
-r /= N
+r /= N/L
 
-r2 = rho2TH(x,L,T,l,phi1,phi2,v0)
-N = rho2NTH(x0,L,T,l,phi1,phi2,v0)
-r2 /= N
 
-plt.scatter(bins,rho)
-plt.plot(x,r)
-#plt.plot(x,r2)
+#rnum = np.asarray( [ rhoNUM(xi,L,T,l,phi1,phi2,v0) for xi in x] )
+#N = rhoNNUM(L,T,l,phi1,phi2,v0)
+#rnum /= N/L
 
+plt.subplot(1,2,1)
+plt.scatter(bins,rho*L)
+plt.plot(x,r, color="red")
+#plt.plot(x,rnum, color="black", linestyle=":")
+#plt.plot(x,r2, color="blue")
+
+plt.subplot(1,2,2)
+
+Jx = np.mean( np.loadtxt("fluxX.dat"), axis = 0)
+Jy = np.mean( np.loadtxt("fluxY.dat") , axis = 0)
+plt.scatter(bins, Jx*L, label="Jx")
+plt.scatter(bins, Jy*L, label="Jy")
+plt.legend()
+
+plt.tight_layout()
 plt.show()
