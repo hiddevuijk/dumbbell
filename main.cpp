@@ -105,8 +105,9 @@ int main()
 
 	// normalize and save orientation
 	orientation.normalize();
-	orientation.write("theta.dat");
-	orientation.write_bins("theta_bins.dat");
+	orientation.writePX("px.dat");
+	orientation.writePY("py.dat");
+	orientation.write_bins("p_bins.dat");
 
 
 	// write final configuration

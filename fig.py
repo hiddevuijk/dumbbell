@@ -11,7 +11,7 @@ from theory import rhoN as rhoNTH
 
 
 x0 = 0
-L = 100.
+L = 10.
 T = 1.
 l = 1.
 v0 = 20.
@@ -51,10 +51,15 @@ plt.plot(x,r, color="red")
 
 plt.subplot(1,2,2)
 
-Jx = np.mean( np.loadtxt("fluxX.dat"), axis = 0)
-Jy = np.mean( np.loadtxt("fluxY.dat") , axis = 0)
-plt.scatter(bins, Jx*L, label="Jx")
-plt.scatter(bins, Jy*L, label="Jy")
+#Jx = np.mean( np.loadtxt("fluxX.dat"), axis = 0)
+#Jy = np.mean( np.loadtxt("fluxY.dat") , axis = 0)
+#plt.scatter(bins, Jx*L, label="Jx")
+#plt.scatter(bins, Jy*L, label="Jy")
+
+px = np.mean( np.loadtxt("px.dat"), axis=0)
+py = np.mean( np.loadtxt("py.dat"), axis=0)
+plt.scatter(bins,px, label="px")
+plt.scatter(bins,py, label="py")
 plt.legend()
 
 plt.tight_layout()
