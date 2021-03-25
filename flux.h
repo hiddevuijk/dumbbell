@@ -3,7 +3,7 @@
 
 class Flux {
 public:
-    Flux(double bs, double max);
+    Flux(double bs, double max, int N);
     
     void sample(const System &system);
 
@@ -21,6 +21,7 @@ public:
 private:
     double bs;
     unsigned int Nbin;
+    int N;
 
     std::vector<std::vector<XY> > J;
     std::vector<double> bins;
@@ -30,8 +31,8 @@ private:
 };
 
 
-Flux::Flux(double bs, double max)
-: bs(bs), Nbin( std::ceil(max/bs) ),
+Flux::Flux(double bs, double max, int N)
+: bs(bs), Nbin( std::ceil(max/bs) ), N(N),
     J(  Nbin, std::vector<XY>(Nbin, XY(0,0) ) ),
     bins(  Nbin, .0 ), Nsample(0) 
 {
@@ -63,10 +64,10 @@ void Flux::sample(const System &system)
 
 void Flux::writeX( std::ostream &out )
 {
-
+    double norm = bs*bs*N*Nsample;
     for(unsigned int iy=0; iy < Nbin; ++iy ) {
         for(unsigned int ix=0; ix < Nbin; ++ix ) {
-            out << J[ix][iy].x/Nsample;
+            out << J[ix][iy].x/norm;
             if( ix < Nbin - 1 ) out << '\t';
         }
         if(iy < Nbin-1) out << "\n";
@@ -76,9 +77,10 @@ void Flux::writeX( std::ostream &out )
 void Flux::writeY( std::ostream &out )
 {
 
+    double norm = bs*bs*N*Nsample;
     for(unsigned int iy=0; iy < Nbin; ++iy ) {
         for(unsigned int ix=0; ix < Nbin; ++ix ) {
-            out << J[ix][iy].y/Nsample;
+            out << J[ix][iy].y/norm;
             if( ix < Nbin - 1 ) out << '\t';
         }
         if(iy < Nbin-1) out << "\n";

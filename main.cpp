@@ -42,7 +42,7 @@ int main()
 	// objects to sample density, orientation
 	Density_xy density(int_params.bs,system.L,system.N);
 	Density_xy densityI(int_params.bs,system.L,system.N);
-	Flux flux(int_params.bs,system.L);
+	Flux flux(int_params.bs,system.L, system.N);
 	Orientation orientation(int_params.bs,system.L);
 
 	// integrate Nt_init time steps
